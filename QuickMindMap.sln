@@ -1,0 +1,33 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31314.256
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickMindMap", "QuickMindMap.csproj", "{B92C3D1E-64EA-4B52-87C2-1E8D2E9F3A15}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM64 = Debug|ARM64
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|ARM64 = Release|ARM64
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B92C3D1E-64EA-4B52-87C2-1E8D2E9F3A15}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{B92C3D1E-64EA-4B52-87C2-1E8D2E9F3A15}.Debug|ARM64.Build.0 = Debug|ARM64
+		{B92C3D1E-64EA-4B52-87C2-1E8D2E9F3A15}.Debug|x64.ActiveCfg = Debug|x64
+		{B92C3D1E-64EA-4B52-87C2-1E8D2E9F3A15}.Debug|x64.Build.0 = Debug|x64
+		{B92C3D1E-64EA-4B52-87C2-1E8D2E9F3A15}.Debug|x86.ActiveCfg = Debug|x86
+		{B92C3D1E-64EA-4B52-87C2-1E8D2E9F3A15}.Debug|x86.Build.0 = Debug|x86
+		{B92C3D1E-64EA-4B52-87C2-1E8D2E9F3A15}.Release|ARM64.ActiveCfg = Release|ARM64
+		{B92C3D1E-64EA-4B52-87C2-1E8D2E9F3A15}.Release|ARM64.Build.0 = Release|ARM64
+		{B92C3D1E-64EA-4B52-87C2-1E8D2E9F3A15}.Release|x64.ActiveCfg = Release|x64
+		{B92C3D1E-64EA-4B52-87C2-1E8D2E9F3A15}.Release|x64.Build.0 = Release|x64
+		{B92C3D1E-64EA-4B52-87C2-1E8D2E9F3A15}.Release|x86.ActiveCfg = Release|x86
+		{B92C3D1E-64EA-4B52-87C2-1E8D2E9F3A15}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

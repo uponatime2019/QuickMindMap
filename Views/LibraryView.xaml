@@ -1,0 +1,310 @@
+<UserControl
+    x:Class="QuickMindMap.Views.LibraryView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Top Header Bar -->
+        <Grid Grid.Row="0" Padding="28,20,28,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Brand Title -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                <Border Width="42" Height="42" CornerRadius="21" Background="#2563EB">
+                    <FontIcon Glyph="&#xE81E;" Foreground="White" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Quick MindMap" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" />
+                    <TextBlock Text="Brainstorming, Notes, Study Planning &amp; Tasks" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Action Buttons -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <Button x:Name="BtnHelp" ToolTipService.ToolTip="Shortcuts &amp; Guide (?)" Click="OnHelpClick" Padding="12,8" CornerRadius="8">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE897;" FontSize="15" />
+                        <TextBlock Text="Help" FontSize="14" />
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="BtnImport" ToolTipService.ToolTip="Import Mind Map (.m8map, .json, .md)" Click="OnImportClick" Padding="12,8" CornerRadius="8">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE8B5;" FontSize="15" />
+                        <TextBlock Text="Import" FontSize="14" />
+                    </StackPanel>
+                </Button>
+
+                <!-- Featured 'New Map' Button (FontSize 22) -->
+                <Button x:Name="BtnNewMap"
+                        Style="{ThemeResource AccentButtonStyle}"
+                        Click="OnNewMapClick"
+                        Padding="22,8"
+                        CornerRadius="10"
+                        ToolTipService.ToolTip="Create a new mind map (Ctrl+N)">
+                    <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE710;" FontSize="22" FontWeight="SemiBold" />
+                        <TextBlock Text="New Map" FontWeight="Bold" FontSize="22" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- Filter & Search Sub-bar -->
+        <Grid Grid.Row="1" Padding="28,4,28,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- View Switcher -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                <Button x:Name="BtnSortName" Click="OnFilterModeClick" Tag="Name" Padding="12,5" CornerRadius="6" FontWeight="SemiBold">
+                    <TextBlock Text="Name (A-Z)" FontSize="14" />
+                </Button>
+                <Button x:Name="BtnSortGroup" Click="OnFilterModeClick" Tag="Group" Padding="12,5" CornerRadius="6">
+                    <TextBlock Text="By Group" FontSize="14" />
+                </Button>
+                <Button x:Name="BtnSortRecent" Click="OnFilterModeClick" Tag="Recent" Padding="12,5" CornerRadius="6">
+                    <TextBlock Text="Recent" FontSize="14" />
+                </Button>
+            </StackPanel>
+
+            <!-- Search Box -->
+            <AutoSuggestBox x:Name="SearchBox"
+                            Grid.Column="2"
+                            Width="300"
+                            PlaceholderText="Search maps by title, group, or topic..."
+                            QueryIcon="Find"
+                            TextChanged="OnSearchTextChanged"
+                            VerticalAlignment="Center" />
+        </Grid>
+
+        <!-- Main Content Area: Grouped List or Empty State -->
+        <ScrollViewer Grid.Row="2" Padding="28,0,28,24" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Grid>
+                <!-- Grouped Mind Map Tiles -->
+                <ItemsControl x:Name="GroupsItemsControl">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Spacing="12" Margin="0,0,0,24">
+                                <!-- Group Header -->
+                                <Border BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Padding="0,0,0,6">
+                                    <TextBlock Text="{Binding Header}" FontSize="18" FontWeight="Bold" Foreground="{ThemeResource AccentFillColorDefaultBrush}" />
+                                </Border>
+
+                                <!-- Grid of Map Tiles in Group -->
+                                <GridView ItemsSource="{Binding Items}"
+                                          SelectionMode="None"
+                                          IsItemClickEnabled="True"
+                                          ItemClick="OnMapTileClick">
+                                    <GridView.ItemContainerStyle>
+                                        <Style TargetType="GridViewItem">
+                                            <Setter Property="Margin" Value="0,0,16,16" />
+                                            <Setter Property="Padding" Value="0" />
+                                        </Style>
+                                    </GridView.ItemContainerStyle>
+                                    <GridView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Width="260"
+                                                    Height="170"
+                                                    Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="10">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="6" />
+                                                        <RowDefinition Height="*" />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
+
+                                                    <!-- Top Accent Color Bar -->
+                                                    <Border Grid.Row="0" Background="{Binding AccentBrush}" CornerRadius="10,10,0,0" />
+
+                                                    <!-- Card Body -->
+                                                    <StackPanel Grid.Row="1" Padding="14,10,14,6" Spacing="6">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <!-- Map Title -->
+                                                            <TextBlock Grid.Column="0"
+                                                                       Text="{Binding Title}"
+                                                                       FontSize="15"
+                                                                       FontWeight="SemiBold"
+                                                                       TextTrimming="CharacterEllipsis"
+                                                                       MaxLines="1"
+                                                                       VerticalAlignment="Center" />
+
+                                                            <!-- More Actions Menu Button -->
+                                                            <Button Grid.Column="1"
+                                                                    Background="Transparent"
+                                                                    BorderThickness="0"
+                                                                    Padding="4"
+                                                                    VerticalAlignment="Center"
+                                                                    Click="OnCardMenuButtonClick"
+                                                                    Tag="{Binding}">
+                                                                <FontIcon Glyph="&#xE712;" FontSize="14" />
+                                                            </Button>
+                                                        </Grid>
+
+                                                        <!-- Category Badge -->
+                                                        <Border HorizontalAlignment="Left"
+                                                                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                                                CornerRadius="4"
+                                                                Padding="6,2">
+                                                            <TextBlock Text="{Binding Group}" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                                        </Border>
+
+                                                        <!-- Preview Topic Chips -->
+                                                        <ItemsControl ItemsSource="{Binding PreviewTopics}">
+                                                            <ItemsControl.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                    <VariableSizedWrapGrid Orientation="Horizontal" MaximumRowsOrColumns="2" ItemHeight="22" />
+                                                                </ItemsPanelTemplate>
+                                                            </ItemsControl.ItemsPanel>
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock Text="{Binding}"
+                                                                               FontSize="14"
+                                                                               Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                                                               TextTrimming="CharacterEllipsis"
+                                                                               MaxWidth="110"
+                                                                               Margin="0,2,8,2" />
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                    </StackPanel>
+
+                                                    <!-- Card Footer -->
+                                                    <Border Grid.Row="2"
+                                                            Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                                            CornerRadius="0,0,10,10"
+                                                            Padding="14,6">
+                                                        <Grid>
+                                                            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                                                <FontIcon Glyph="&#xE81E;" FontSize="14" Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                                                                <TextBlock Text="{Binding NodeCount}" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                                                <TextBlock Text="nodes" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                                            </StackPanel>
+
+                                                            <TextBlock HorizontalAlignment="Right"
+                                                                       Text="{Binding FormattedModifiedDate}"
+                                                                       FontSize="14"
+                                                                       Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                                                       VerticalAlignment="Center" />
+                                                        </Grid>
+                                                    </Border>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </GridView.ItemTemplate>
+                                </GridView>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Empty State (Guide Creation without Fabricated Samples) -->
+                <Border x:Name="EmptyStateContainer"
+                        Visibility="Collapsed"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        MaxWidth="680"
+                        Margin="0,36,0,36"
+                        Padding="32"
+                        Background="{ThemeResource LayerFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="16">
+                    <StackPanel Spacing="20" HorizontalAlignment="Center">
+                        <!-- Icon -->
+                        <Border Width="64" Height="64" CornerRadius="32" Background="#1E40AF" HorizontalAlignment="Center">
+                            <FontIcon Glyph="&#xE710;" Foreground="White" FontSize="28" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+
+                        <StackPanel Spacing="6" HorizontalAlignment="Center">
+                            <TextBlock Text="No Mind Maps Found" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" />
+                            <TextBlock Text="Create a map from a structured template or start fresh to capture your ideas."
+                                       FontSize="14"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                       HorizontalAlignment="Center"
+                                       TextAlignment="Center"
+                                       MaxWidth="480" />
+                        </StackPanel>
+
+                        <!-- Quick Templates Header -->
+                        <TextBlock Text="QUICK START TEMPLATES" FontSize="14" FontWeight="Bold" Foreground="{ThemeResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center" />
+
+                        <!-- Template Cards Wrap Grid -->
+                        <VariableSizedWrapGrid MaximumRowsOrColumns="3" Orientation="Horizontal" HorizontalAlignment="Center" ItemWidth="190" ItemHeight="100">
+                            <!-- Template 1: Blank -->
+                            <Button Click="OnQuickTemplateClick" Tag="blank" Margin="4" Padding="12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
+                                <StackPanel Spacing="4" HorizontalAlignment="Left">
+                                    <TextBlock Text="✨ Blank Mind Map" FontWeight="SemiBold" FontSize="14" />
+                                    <TextBlock Text="Clean central canvas." FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Template 2: Brainstorm -->
+                            <Button Click="OnQuickTemplateClick" Tag="brainstorm" Margin="4" Padding="12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
+                                <StackPanel Spacing="4" HorizontalAlignment="Left">
+                                    <TextBlock Text="🧠 Brainstorming" FontWeight="SemiBold" FontSize="14" />
+                                    <TextBlock Text="Ideas, causes, actions." FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Template 3: Project Plan -->
+                            <Button Click="OnQuickTemplateClick" Tag="project_plan" Margin="4" Padding="12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
+                                <StackPanel Spacing="4" HorizontalAlignment="Left">
+                                    <TextBlock Text="🚀 Project Planning" FontWeight="SemiBold" FontSize="14" />
+                                    <TextBlock Text="Scope, milestones, tasks." FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Template 4: Study Notes -->
+                            <Button Click="OnQuickTemplateClick" Tag="study_notes" Margin="4" Padding="12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
+                                <StackPanel Spacing="4" HorizontalAlignment="Left">
+                                    <TextBlock Text="📚 Study &amp; Exam" FontWeight="SemiBold" FontSize="14" />
+                                    <TextBlock Text="Concepts, formulas, terms." FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Template 5: Pros & Cons -->
+                            <Button Click="OnQuickTemplateClick" Tag="pros_cons" Margin="4" Padding="12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
+                                <StackPanel Spacing="4" HorizontalAlignment="Left">
+                                    <TextBlock Text="⚖️ Pros &amp; Cons" FontWeight="SemiBold" FontSize="14" />
+                                    <TextBlock Text="Weigh decisions clearly." FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Template 6: Meeting Notes -->
+                            <Button Click="OnQuickTemplateClick" Tag="meeting_notes" Margin="4" Padding="12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
+                                <StackPanel Spacing="4" HorizontalAlignment="Left">
+                                    <TextBlock Text="📋 Meeting Notes" FontWeight="SemiBold" FontSize="14" />
+                                    <TextBlock Text="Agendas, decisions, actions." FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Button>
+                        </VariableSizedWrapGrid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
